@@ -11,6 +11,7 @@ gem 'jquery-rails'
 gem 'jbuilder', '~> 2.5'
 
 gem 'figaro'
+gem 'faraday'
 
 group :development, :test do
   gem 'byebug', platform: :mri
