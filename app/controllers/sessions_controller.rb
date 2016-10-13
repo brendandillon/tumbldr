@@ -1,13 +1,18 @@
 class SessionsController < ApplicationController
   def create
-    tumblr = TumblrService.new(session[:token], session[:token_secret])
     access_body = tumblr.access_token(params[:oauth_verifier])
 
     session[:token] = access_body.split(/\W+/)[1]
     session[:token_secret] = access_body.split(/\W+/)[3]
 
-    updated_tumblr = TumblrService.new(session[:token], session[:token_secret])
+    @user = TumblrUser.new(tumblr.user_info)
 
-    @info = updated_tumblr.info
+    user = User.find_or_create_by(name: @user.name) 
+    user.token = session[:token]
+    user.token_secret = session[:token_secret]
+
+    session[:name] = user.name
+
+    redirect_to user_path(user, user: @user)
   end
 end

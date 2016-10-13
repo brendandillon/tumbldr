@@ -1,0 +1,6 @@
+<h1>Create a post</h1>
+
+<%= form_tag posts_path, method: :post do %>
+  <%= text_area_tag :body %>
+  <%= submit_tag 'Post', class: 'btn btn-default' %>
+<% end %>

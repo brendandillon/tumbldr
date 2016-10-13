@@ -7,7 +7,7 @@ class OauthUrl
   SIGNATURE_METHOD = 'HMAC-SHA1'
   VERSION = '1.0'
 
-  def initialize(verb, url, token = nil, token_secret = "", verifier = nil)
+  def initialize(verb, url, token = nil, token_secret = "", verifier = nil, before_params = "", after_params = "")
     @url = url
     @verb = verb.upcase
     @timestamp = Time.now.to_i.to_s
@@ -15,6 +15,8 @@ class OauthUrl
     @token = token
     @verifier = verifier
     @secret_key = Figaro.env.oauth_secret_key + '&' + token_secret
+    @before_params = before_params
+    @after_params = after_params
   end
 
   def parameters
@@ -50,7 +52,7 @@ class OauthUrl
   end
 
   def request_parameters
-    "oauth_consumer_key=#{CONSUMER_KEY}&oauth_nonce=#{@nonce}&oauth_signature_method=#{SIGNATURE_METHOD}&oauth_timestamp=#{@timestamp}&oauth_token=#{@token}&oauth_version=#{VERSION}"
+    @before_params + "oauth_consumer_key=#{CONSUMER_KEY}&oauth_nonce=#{@nonce}&oauth_signature_method=#{SIGNATURE_METHOD}&oauth_timestamp=#{@timestamp}&oauth_token=#{@token}&oauth_version=#{VERSION}" + @after_params
   end
 
   def request_base_string
@@ -63,5 +65,21 @@ class OauthUrl
 
   def request_url
     "#{@url}?#{request_parameters}&oauth_signature=#{request_signature}"
+  end
+
+  def post_parameters
+    "oauth_consumer_key=#{CONSUMER_KEY}&oauth_nonce=#{@nonce}&oauth_signature_method=#{SIGNATURE_METHOD}&oauth_timestamp=#{@timestamp}&oauth_token=#{@token}&oauth_version=#{VERSION}"
+  end
+
+  def post_base_string
+    "#{@verb}&#{CGI.escape(@url)}&#{CGI.escape(post_parameters)}"
+  end
+
+  def post_signature
+    CGI.escape(Base64.encode64("#{OpenSSL::HMAC.digest('sha1',@secret_key,post_base_string)}").chomp)
+  end
+
+  def post_url
+    "#{@url}?#{post_parameters}&oauth_signature=#{request_signature}"
   end
 end

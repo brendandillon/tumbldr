@@ -1,0 +1,6 @@
+<h1><%= image_tag @avatar %>Hello, <%= current_user.name %></h1>
+<div class='btn-group'>
+  <%= link_to "My blogs", blogs_path, class:'btn btn-default' %>
+  <%= link_to "Dashboard", posts_path, class:'btn btn-default' %>
+  <%= link_to "Create Post", new_post_path, class:'btn btn-default' %>
+</div>

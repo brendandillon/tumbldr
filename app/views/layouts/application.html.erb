@@ -9,6 +9,20 @@
   </head>
 
   <body>
-    <%= yield %>
+    <nav class='navbar navbar-default'>
+    <%= link_to 'Tumbl;dr', user_path(current_user), class: 'navbar-brand' %>
+      <ul class='nav navbar-nav'>
+        <li class='nav-item'>
+          <%= link_to 'Login', new_session_path, class: 'nav-item' %>
+        </li>
+        <li class='nav-item'>
+        </li>
+        <li class='nav-item'>
+        </li>
+      </ul>
+    </nav>
+    <div class='container'>
+      <%= yield %>
+    </div>
   </body>
 </html>
